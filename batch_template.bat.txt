@@ -1,0 +1,2 @@
+cd $path 
+pipenv run python $routine

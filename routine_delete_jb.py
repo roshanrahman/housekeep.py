@@ -1,0 +1,54 @@
+import os
+import re
+from housekeep.load_plugins import locate_interfaces, locate_plugins
+
+# Specify the root directory to perform the housekeeping on. (Only files inside this directory will be affected.)
+routine_root = "E:\Downloads\delete-2"
+
+# Edit the name of the plugin to be loaded.
+plugin_to_load = "delete"
+
+# Edit the name of the interface to be loaded.
+interface_to_load = "cli"
+
+# Specify regex pattern to apply on the files. (Only files matching this regex will be affected.)
+# match_pattern = r'^.*\.(torrent)'
+match_pattern = None
+
+
+# -------------------------DO NOT EDIT AFTER THIS LINE -------------------------
+
+plugin_class = locate_plugins(only=plugin_to_load)
+interface_class = locate_interfaces(only=interface_to_load)
+
+
+def get_all_files_in_root(root, match_regex=None):
+    files = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        for filename in filenames:
+            full_path = os.path.join(dirpath, filename)
+            full_path.replace(root, '')
+            if full_path[0:2] == '\\\\':
+                full_path = full_path[2:]
+            if not match_regex or re.match(match_regex, full_path):
+                files.append(full_path)
+    return files
+
+
+try:
+    assert plugin_class != None
+except AssertionError:
+    print("Plugin %s not found", plugin_to_load)
+    exit(1)
+
+
+match_regex = re.compile(match_pattern) if match_pattern else None
+files_for_action = get_all_files_in_root(routine_root, match_regex)
+
+if(len(files_for_action) == 0):
+    exit(0)
+
+plugin_instance = plugin_class()
+interface_instance = interface_class(
+    files_for_action, plugin_instance, confirm=True)
+interface_instance.run()
