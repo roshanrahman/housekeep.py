@@ -19,6 +19,7 @@ risky_directories = [
 
 
 def display_instructions(runner_file):
+    current_dir = os.getcwd()
     if os.name == 'nt':
         console.rule(
             '[bold yellow]Instructions for scheduling this task on Windows[/]')
@@ -45,9 +46,10 @@ def display_instructions(runner_file):
 
            [bold white link=file://{runner_file}]{runner_file}[/] 
            
-           Copy the path for the next step as well.
-        
-        7. Paste the same path into the "Start in" field.
+        7. Enter the path where the routine file is located, into the "Start in" field.
+           or copy/paste this path:
+
+           [bold white link=file://{current_dir}]{current_dir}[/]
         
         8. Verify the task details and click Finish to create your scheduled task.
 
@@ -98,7 +100,7 @@ def generate_random_name(prefix, suffix):
 def build_routine_from_template(root, plugin, interface, regex, routine_name):
     current_working_directory = os.getcwd()
     template_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), 'routine_template.py.txt')
+        os.path.realpath(__file__)),'templates', 'routine_template.py.txt')
     template = Template(open(template_path).read())
     routine_path = os.path.join(
         current_working_directory, routine_name)
@@ -112,7 +114,7 @@ def build_batch_from_template(routine):
     extension = '.bat' if os.name == 'nt' else '.sh'
     current_working_directory = os.getcwd()
     template_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), 'batch_template.bat.txt')
+        os.path.realpath(__file__)),'templates', 'batch_template.bat.txt')
     template = Template(open(template_path).read())
     batch_path = os.path.join(
         current_working_directory, f'{routine[:-3]}{extension}')
