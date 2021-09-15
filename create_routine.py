@@ -163,7 +163,8 @@ def main():
         'Select the folder that you want to run this routine on. (No files outside this path will be affected.)\n')
     value = console.input(
         '[bold yellow]Press any key to open file browser dialog[/] > ')
-    file_path = os.path.normpath(str(filedialog.askdirectory()).strip())
+    file_path = os.path.normpath(
+        str(filedialog.askdirectory()).strip()).replace('\\', '\\\\')
     if(file_path is None):
         raise KeyboardInterrupt
     if(any([item in file_path for item in risky_directories])):
